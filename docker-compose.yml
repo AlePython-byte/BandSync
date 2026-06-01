@@ -1,0 +1,53 @@
+services:
+  mongodb:
+    image: mongo:6.0
+    container_name: bandsync-mongodb
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_DATABASE: bandsync_db
+    volumes:
+      - mongo_data:/data/db
+    networks:
+      - bandsync-network
+
+  mongo-express:
+    image: mongo-express
+    container_name: bandsync-mongo-express
+    restart: unless-stopped
+    ports:
+      - "8081:8081"
+    environment:
+      ME_CONFIG_MONGODB_SERVER: mongodb
+      ME_CONFIG_BASICAUTH: false
+    depends_on:
+      - mongodb
+    networks:
+      - bandsync-network
+
+  bandsync-api:
+    build:
+      context: .
+    container_name: bandsync-api
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    depends_on:
+      mongodb:
+        condition: service_started
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      SPRING_DATA_MONGODB_URI: mongodb://mongodb:27017/bandsync_db
+      APP_JWT_SECRET: bandsync-secret-key-2025-muy-larga-para-seguridad
+      APP_JWT_EXPIRATION: 28800000
+      APP_RESEND_API_KEY: ${RESEND_API_KEY:-placeholder}
+    networks:
+      - bandsync-network
+
+volumes:
+  mongo_data:
+
+networks:
+  bandsync-network:
+    driver: bridge
