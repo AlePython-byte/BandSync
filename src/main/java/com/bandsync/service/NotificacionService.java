@@ -15,7 +15,7 @@ import java.time.format.DateTimeFormatter;
 @Slf4j
 public class NotificacionService {
 
-    private static final String FROM = "BandSync <noreply@bandsync.com>";
+    private static final String FROM = "BandSync <onboarding@resend.dev>";
     private static final DateTimeFormatter FMT_DATETIME = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
     private static final DateTimeFormatter FMT_DATE = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
